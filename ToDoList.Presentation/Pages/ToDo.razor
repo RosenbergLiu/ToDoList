@@ -1,0 +1,97 @@
+﻿@page "/"
+@using ToDoList.Domain
+
+<PageTitle>Todo</PageTitle>
+
+<div class="mx-auto max-w-screen-xl px-4 2xl:px-0">
+    <div class="mx-auto max-w-5xl">
+        <div class="gap-4 sm:flex sm:items-center sm:justify-between">
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">To-do list</h2>
+
+            <div class="mt-6 gap-4 space-y-4 sm:mt-0 sm:flex sm:items-center sm:justify-end sm:space-y-0">
+                <div>
+                    <label for="item-type" class="sr-only mb-2 block text-sm font-medium text-gray-900 dark:text-white">Filter finish</label>
+                    <select id="item-type" class="min-w-[8rem] block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500">
+                        <option selected>All reminders</option>
+                        <option value="unfinished">Unfinished</option>
+                        <option value="finished">Finished</option>
+                    </select>
+                </div>
+
+                <span class="inline-block text-gray-500 dark:text-gray-400"> from </span>
+
+                <div>
+                    <label for="duration" class="sr-only mb-2 block text-sm font-medium text-gray-900 dark:text-white">Select duration</label>
+                    <select id="duration" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500">
+                        <option selected>this week</option>
+                        <option value="this month">this month</option>
+                        <option value="last 3 months">the last 3 months</option>
+                        <option value="lats 6 months">the last 6 months</option>
+                        <option value="this year">this year</option>
+                    </select>
+                </div>
+
+                <span class="inline-block text-gray-500 dark:text-gray-400"> to </span>
+
+                <div>
+                    <div class="relative max-w-sm">
+                        <div class="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3">
+                            <svg class="h-4 w-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+                            </svg>
+                        </div>
+                        <input id="datepicker-autohide" datepicker datepicker-autohide type="text" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 ps-10 text-sm text-gray-900 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Select date">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button type="button" class="shadow-purple-500/50 me-2 mt-6 w-full rounded-lg bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 px-5 py-2.5 text-center text-sm font-medium text-white shadow-lg hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:shadow-lg dark:shadow-purple-800/80 dark:focus:ring-purple-800">Purple</button>
+
+        <div class="mt-6 flow-root sm:mt-8">
+            <div class="divide-y divide-gray-200 dark:divide-gray-700">
+            @foreach(var item in ToDoRecords)
+            {
+                <ToDoItem Record="@item" OnRecordUpdated="UpdateRecord"></ToDoItem>
+            }
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+
+@code{
+    public List<ToDoRecord> ToDoRecords { get; set; } = new List<ToDoRecord>();
+
+    protected override Task OnInitializedAsync()
+    {
+        ToDoRecords.Add(new ToDoRecord
+            {
+                Id = 1,
+                CreatedOn = DateTime.Now,
+                DueDate = DateTime.Now.AddDays(2),
+                Title = "Buy apple",
+                Description = "From coles"
+            });
+        ToDoRecords.Add(new ToDoRecord
+            {
+                Id = 2,
+                CreatedOn = DateTime.Now,
+                DueDate = DateTime.Now.AddDays(3),
+                FinishedAt = DateTime.Now.AddDays(2),
+                Title = "Buy coke",
+                Description = "Diet coke only",
+                State = ToDoState.Finished
+            });
+
+        return base.OnInitializedAsync();
+    }
+
+    public async Task UpdateRecord(ToDoRecord record)
+    {
+        
+    }
+}
