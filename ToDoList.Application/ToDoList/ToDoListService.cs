@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ToDoList.Domain;
 using ToDoList.Domain.Entities;
-using ToDoList.Domain.ToDoListServiceResults;
+using ToDoList.Domain.Enums;
+using ToDoList.Domain.Forms;
+using ToDoList.Domain.Results;
 using ToDoList.Infrastructure;
 
 namespace ToDoList.Application.ToDoList
@@ -15,27 +17,62 @@ namespace ToDoList.Application.ToDoList
             _context = context;
         }
 
-        public async Task<GetAllRecordsResult> GetAllRecordsAsync()
+        public async Task<GetRecordsResult> GetAllRecordsAsync()
         {
-            var records = await _context.ToDoRecords
-            .Where(record => !record.IsDeleted)
-            .OrderBy(record => record.DueDate)
-            .ToListAsync();
-
-            if(records == null)
+            try
             {
-                return new GetAllRecordsResult()
-                {
-                    IsSuccess = false,
-                    Message = "Failed to get data",
-                    Records = []
-                };
-            }
+                var records = await _context.ToDoRecords
+                .Where(record => !record.IsDeleted)
+                .OrderBy(record => record.DueDate)
+                .ToListAsync();
 
-            return new GetAllRecordsResult { 
-                IsSuccess = true,
-                Records = records
-            };
+                if (records == null)
+                {
+                    return new GetRecordsResult("Failed to get data");
+                }
+
+                return new GetRecordsResult(records);
+            }
+            catch (Exception ex) {
+                return new GetRecordsResult(ex.Message);
+            }
+        }
+
+        public async Task<GetRecordsResult> GetRecordsWithFilterAsync(DateTime? startDate, DateTime? endDate, ToDoType toDoType = ToDoType.All)
+        {
+            try
+            {
+                // Filter records in database because SQLite is cheap
+                var query = _context.ToDoRecords.Where(record => !record.IsDeleted).AsQueryable();
+
+                if (toDoType == ToDoType.Completed)
+                {
+                    query = query.Where(t => t.State == ToDoState.Finished);
+                }
+
+                if (toDoType == ToDoType.Uncomplete)
+                {
+                    query = query.Where(t => t.State == ToDoState.Created);
+                }
+
+                if (startDate.HasValue)
+                {
+                    query = query.Where(t => t.CreatedOn >= startDate.Value);
+                }
+
+                if (endDate.HasValue)
+                {
+                    query = query.Where(t => t.CreatedOn <= endDate.Value);
+                }
+
+                var records = await query.OrderBy(record => record.DueDate).ToListAsync();
+
+                return new GetRecordsResult(records);
+            }
+            catch (Exception ex)
+            {
+                return new GetRecordsResult(ex.Message);
+            }
         }
 
         public async Task<ResultBase> UpdateRecord(ToDoRecord record)
@@ -62,7 +99,8 @@ namespace ToDoList.Application.ToDoList
 
                 if (existRecord != null)
                 {
-                    _context.ToDoRecords.Remove(existRecord);
+                    // Logical delete
+                    existRecord.IsDeleted = true;
                     await _context.SaveChangesAsync();
                 }
 
@@ -74,5 +112,29 @@ namespace ToDoList.Application.ToDoList
             }
         }
 
+        public async Task<ResultBase> CreateRecordAsync(ToDoDetailsFormModel model)
+        {
+            try
+            {
+                var record = new ToDoRecord
+                {
+                    Title = model.Title,
+                    DueDate = model.DueDate,
+                    Description = model.Description,
+                    CreatedOn = DateTime.Now,
+                    State = ToDoState.Created
+                };
+
+                await _context.ToDoRecords.AddAsync(record);
+
+                await _context.SaveChangesAsync();
+
+                return new ResultBase();
+            }
+            catch (Exception ex)
+            {
+                return new ResultBase(ex.Message);
+            }
+        }
     }
 }

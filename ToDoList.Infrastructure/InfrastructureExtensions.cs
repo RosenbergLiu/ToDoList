@@ -23,6 +23,10 @@ namespace ToDoList.Infrastructure
             return services;
         }
 
+        /// <summary>
+        /// Add seed data
+        /// </summary>
+        /// <param name="dbContext"></param>
         private static void AddSeedData(AppDbContext dbContext)
         {
             dbContext.ToDoRecords.AddRange(
@@ -32,7 +36,7 @@ namespace ToDoList.Infrastructure
                     Title = "Buy coke",
                     CreatedOn = DateTime.Now.AddDays(-1),
                     DueDate = DateTime.Now.AddDays(2),
-                    FinishedAt = DateTime.MinValue,
+                    FinishedAt = null,
                     Description = "Diet coke only",
                     State = ToDoState.Created,
                     IsDeleted = false
@@ -54,9 +58,42 @@ namespace ToDoList.Infrastructure
                     Title = "Feed cat",
                     CreatedOn = DateTime.Now,
                     DueDate = DateTime.Now.AddDays(1),
-                    FinishedAt = DateTime.MinValue,
+                    FinishedAt = null,
                     Description = "Use fish meat this time",
                     State = ToDoState.Created,
+                    IsDeleted = false
+                },
+                new ToDoRecord
+                {
+                    Id = 4,
+                    Title = "Cancel Disney+ subscription",
+                    CreatedOn = DateTime.Now.AddDays(-20),
+                    DueDate = null,
+                    FinishedAt = null,
+                    Description = "Its price increased",
+                    State = ToDoState.Created,
+                    IsDeleted = false
+                },
+                new ToDoRecord
+                {
+                    Id = 5,
+                    Title = "Get a forklift license",
+                    CreatedOn = DateTime.Now.AddDays(-4),
+                    DueDate = DateTime.Now.AddDays(26),
+                    FinishedAt = null,
+                    Description = "Boss asked for it",
+                    State = ToDoState.Created,
+                    IsDeleted = false
+                },
+                new ToDoRecord
+                {
+                    Id = 6,
+                    Title = "Cook tomorrow's lunch",
+                    CreatedOn = DateTime.Now,
+                    DueDate = DateTime.Now,
+                    FinishedAt = DateTime.Now,
+                    Description = "There is no restaurant around the company",
+                    State = ToDoState.Finished,
                     IsDeleted = false
                 }
             );

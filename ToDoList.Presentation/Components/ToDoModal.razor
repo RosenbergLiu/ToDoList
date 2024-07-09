@@ -4,57 +4,81 @@
         <div class="relative rounded-lg bg-white p-4 shadow dark:bg-gray-800 sm:p-5">
             <!-- Modal header -->
             <div class="mb-4 flex items-center justify-between rounded-t border-b pb-4 dark:border-gray-600 sm:mb-5">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                    Update To-do
-                </h3>
+                @if(Record == null)
+                {
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                        Create a new task
+                    </h3>
+                }
+                else
+                {
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                        Update task
+                    </h3>
+                }
                 <CloseButton class="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white">
                     <span class="sr-only">Close modal</span>
                 </CloseButton>
             </div>
             <!-- Modal body -->
             <form @onsubmit="OnRecordDetailChanged">
-                <div class="mb-4 grid gap-4 sm:grid-cols-2">
-                    <div>
-                        <label for="name" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Title</label>
-                        <Validation Validator="ValidationRule.IsNotEmpty">
-                            <input type="text" @bind-value="FormModel.Title" name="name" id="name" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:ring-primary-600 focus:border-primary-600 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                        </Validation>
-                    </div>
-
-                    <div>
-                        <label for="brand" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Due date</label>
-                        <div class="relative max-w-sm">
-                            <div class="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3">
-                                <svg class="h-4 w-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-                                </svg>
-                            </div>
+                <Validations @ref="FormValidator" Mode="ValidationMode.Manual">
+                    <div class="mb-4 grid gap-4 sm:grid-cols-2">
+                        <div>
+                            <label for="name" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Title</label>
                             <Validation Validator="ValidationRule.IsNotEmpty">
-                                <DatePicker TValue="DateTime?" @bind-Date="@FormModel.DueDate" Min="DateTime.Today" InputMode="DateInputMode.Date" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 ps-10 text-sm text-gray-900 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></DatePicker>
+                                <TextEdit type="text" @bind-text="FormModel.Title" Placeholder="Task title" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:ring-primary-600 focus:border-primary-600 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                                    <Feedback>
+                                        <ValidationError>Title cannot be empty.</ValidationError>
+                                    </Feedback>
+                                </TextEdit>
                             </Validation>
                         </div>
+                        <div>
+                            <label for="brand" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Due date</label>
+                            <div class="relative max-w-sm">
+                                <div class="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3">
+                                    <svg class="h-4 w-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+                                    </svg>
+                                </div>
+                                <DatePicker TValue="DateTime?" @bind-Date="@FormModel.DueDate" Min="DateTime.Today" InputMode="DateInputMode.Date" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 ps-10 text-sm text-gray-900 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                </DatePicker>
+                            </div>
+                        </div>
+                        <div class="sm:col-span-2">
+                            <label for="description" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Description</label>
+                            <textarea @bind="FormModel.Description" rows="5" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"></textarea>
+                        </div>
                     </div>
-                    <div class="sm:col-span-2">
-                        <label for="description" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Description</label>
-                        <textarea @bind="FormModel.Description" rows="5" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"></textarea>
+                    <div class="flex items-center space-x-4">
+                        @if(Record == null)
+                        {
+                            <button type="submit" class="bg-primary-700 rounded-lg px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                                Create
+                            </button>
+                        }
+                        else
+                        {
+                            <button type="submit" class="bg-primary-700 rounded-lg px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                                Update
+                            </button>
+                            <button @onclick="OnDeleteToDoClicked" type="button" class="inline-flex items-center rounded-lg border border-red-600 px-5 py-2.5 text-center text-sm font-medium text-red-600 hover:text-white hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900">
+                                <svg class="-ml-1 mr-1 h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                                Delete
+                            </button>
+                        }
                     </div>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <button type="submit" class="bg-primary-700 rounded-lg px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
-                        Update To-do
-                    </button>
-                    <button @onclick="OnDeleteToDoClicked" type="button" class="inline-flex items-center rounded-lg border border-red-600 px-5 py-2.5 text-center text-sm font-medium text-red-600 hover:text-white hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900">
-                        <svg class="-ml-1 mr-1 h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
-                        Delete
-                    </button>
-                </div>
+                </Validations>
             </form>
         </div>
     </div>
 </Modal>
 
 @code {
-    Modal ModalRef;
+    public Modal ModalRef;
+
+    Validations FormValidator;
 
     [Parameter]
     public ToDoRecord? Record { get; set; }
@@ -71,27 +95,24 @@
     [Parameter]
     public EventCallback<ToDoDetailsFormModel> OnCreate { get; set; }
 
-    protected override void OnInitialized()
+    // Create an empty form to create task
+    public async Task ShowCreateForm()
     {
-        if (Record != null)
-        {
-            FormModel = new ToDoDetailsFormModel
-                {
-                    Title = Record.Title,
-                    DueDate = Record.DueDate,
-                    Description = Record.Description
-                };
-        }
-    }
-
-    public async Task Show()
-    {
+        FormModel = new ToDoDetailsFormModel();
         await ModalRef.Show();
     }
 
-    public async Task Hide()
+
+    // Show the detail of an existing task
+    public async Task ShowDetailsForm()
     {
-        await ModalRef.Hide();
+        FormModel = new ToDoDetailsFormModel
+            {
+                Title = Record!.Title,
+                DueDate = Record.DueDate,
+                Description = Record.Description
+            };
+        await ModalRef.Show();
     }
 
     private async Task OnDeleteToDoClicked()
@@ -101,6 +122,11 @@
 
     private async Task OnRecordDetailChanged()
     {
+        if (!await FormValidator.ValidateAll())
+        {
+            return;
+        }
+
         if (Record == null)
         {
             await OnCreate.InvokeAsync(FormModel);
@@ -108,7 +134,7 @@
         }
 
         Record.Title = FormModel.Title;
-        Record.DueDate = FormModel.DueDate!.Value;
+        Record.DueDate = FormModel.DueDate;
         Record.Description = FormModel.Description;
 
         await OnUpdate.InvokeAsync(Record);

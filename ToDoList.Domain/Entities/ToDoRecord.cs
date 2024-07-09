@@ -12,9 +12,9 @@ namespace ToDoList.Domain.Entities
 
         public DateTime CreatedOn { get; set; }
 
-        public DateTime DueDate { get; set; }
+        public DateTime? DueDate { get; set; }
 
-        public DateTime FinishedAt { get; set; }
+        public DateTime? FinishedAt { get; set; }
 
         public string Description { get; set; } = string.Empty;
 

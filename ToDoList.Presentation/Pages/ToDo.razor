@@ -25,8 +25,8 @@
                     }
                 </div>
 
-                <span class="inline-block text-gray-500 dark:text-gray-400"> from </span>
-
+                <span class="inline-block text-gray-500 dark:text-gray-400"> created from </span>
+                
                 <div class="w-48">
                     <div class="relative max-w-sm">
                         <div class="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3">
@@ -59,7 +59,7 @@
             </div>
         </div>
 
-        <button @onclick="OnAddNewClicked" type="button" class="shadow-purple-500/50 me-2 mt-6 w-full rounded-lg bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 px-5 py-2.5 text-center text-sm font-medium text-white shadow-lg hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:shadow-lg dark:shadow-purple-800/80 dark:focus:ring-purple-800">Add New To-do</button>
+        <button @onclick="OnAddNewClicked" type="button" class="shadow-purple-500/50 me-2 mt-6 w-full rounded-lg bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 px-5 py-2.5 text-center text-sm font-medium text-white shadow-lg hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:shadow-lg dark:shadow-purple-800/80 dark:focus:ring-purple-800">Add New</button>
 
         @if (isBusy)
         {
@@ -80,34 +80,49 @@
 <ToDoModal @ref="AddNewToDoModal" Record="@(null)" OnUpdate="UpdateRecord" OnDelete="DeleteRecord" OnCreate="CreateRecord"></ToDoModal>
 
 @code{
+    // Create after date filter
     DatePicker<DateTime?> FilterStartDatePicker;
     string FilterStartDateStr = "Select date";
     DateTime? FilterStartDate;
     DateTime? FilterStartDateMax;
 
+    // Create before date filter
     DatePicker<DateTime?> FilterEndDatePicker;
     string FilterEndDateStr = "Select date";
-    DateTime? FilterEndDate { get; set; }
-    DateTime? FilterEndDateMin { get; set; }
+    DateTime? FilterEndDate;
+    DateTime? FilterEndDateMin;
 
+    // Completed or uncomplete filter
+    ToDoType SelectedToDoType = ToDoType.All;
+
+    // Modal object
     ToDoModal AddNewToDoModal;
 
-    public ToDoType SelectedToDoType { get; set; }
-
+    // List of records
     public List<ToDoRecord> ToDoRecords { get; set; } = new List<ToDoRecord>();
 
     private bool isBusy { get; set; } = false;
 
     protected override async Task OnInitializedAsync()
     {
-        await RefreshList();
+        await RefreshList(false);
     }
 
-    private async Task RefreshList()
+    private async Task RefreshList(bool withFilter)
     {
         isBusy = true;
 
-        var result = await ToDoListService.GetAllRecordsAsync();
+        GetRecordsResult result;
+
+        if (withFilter)
+        {
+            result = await ToDoListService.GetRecordsWithFilterAsync(FilterStartDate, FilterEndDate, SelectedToDoType);
+        }
+        else
+        {
+            result = await ToDoListService.GetAllRecordsAsync();
+        }
+
         if (!result.IsSuccess)
         {
             // display error message
@@ -129,65 +144,88 @@
             return;
         }
 
-        await RefreshList();
-
+        await AddNewToDoModal.ModalRef.Hide();
+        await RefreshList(true);
         StateHasChanged();
 
         return;
     }
 
-    public async Task DeleteRecord(int recordId)
+    private async Task DeleteRecord(int recordId)
     {
         var result = await ToDoListService.DeleteRecord(recordId);
-        if (result.IsSuccess)
+        if (!result.IsSuccess)
         {
-            await RefreshList();
+            // display error message
+            return;
         }
+
+        await AddNewToDoModal.ModalRef.Hide();
+        await RefreshList(true);
+        StateHasChanged();
+
+        return;
     }
 
-    private void OnSelectedToDoTypeChanged(ToDoType toDoType)
+    private async Task CreateRecord(ToDoDetailsFormModel model)
+    {
+        var result = await ToDoListService.CreateRecordAsync(model);
+        if (!result.IsSuccess)
+        {
+            // display error message
+            return;
+        }
+
+        await AddNewToDoModal.ModalRef.Hide();
+        await RefreshList(true);
+        StateHasChanged();
+
+        return;
+    }
+
+    /// <summary>
+    /// Event callback from complete filter dropdown selector
+    /// </summary>
+    /// <param name="toDoType"></param>
+    /// <returns></returns>
+    private async Task OnSelectedToDoTypeChanged(ToDoType toDoType)
     {
         SelectedToDoType = toDoType;
+        await RefreshList(true);
+        StateHasChanged();
     }
 
-    private void OnStartDateChanged(DateTime? startDate)
+    private async Task OnStartDateChanged(DateTime? startDate)
     {
         FilterStartDate = startDate;
         FilterEndDateMin = startDate;
         FilterStartDateStr = startDate!.Value.ToString("dd-MM-yyyy");
+        await RefreshList(true);
+        StateHasChanged();
     }
 
-    private void OnEndDateChanged(DateTime? endDate)
+    private async Task OnEndDateChanged(DateTime? endDate)
     {
         FilterEndDate = endDate;
         FilterStartDateMax = endDate;
         FilterEndDateStr = endDate!.Value.ToString("dd-MM-yyyy");
+        await RefreshList(true);
+        StateHasChanged();
     }
 
-    private void ClearFilterDate()
+    private async Task ClearFilterDate()
     {
         FilterStartDate = FilterEndDate = null;
         FilterStartDateStr = FilterEndDateStr = "Select date";
         FilterStartDateMax = FilterEndDateMin = null;
+        await RefreshList(true);
+        StateHasChanged();
     }
 
-    private async void CreateRecord(ToDoDetailsFormModel model)
+    
+
+    private async Task OnAddNewClicked()
     {
-        var record = new ToDoRecord
-            {
-                DueDate = model.DueDate!.Value,
-                CreatedOn = DateTime.Now,
-                Description = model.Description,
-                Title = model.Title,
-                State = ToDoState.Created
-            };
-
-
-    }
-
-    private void OnAddNewClicked()
-    {
-
-        AddNewToDoModal.Show();
+        await AddNewToDoModal.ShowCreateForm();
     }
 }
