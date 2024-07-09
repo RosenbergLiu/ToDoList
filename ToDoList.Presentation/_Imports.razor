@@ -1,10 +1,24 @@
 ﻿@using System.Net.Http
 @using System.Net.Http.Json
+@using System.Globalization
+
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components.Routing
 @using Microsoft.AspNetCore.Components.Web
 @using static Microsoft.AspNetCore.Components.Web.RenderMode
 @using Microsoft.AspNetCore.Components.Web.Virtualization
 @using Microsoft.JSInterop
+
 @using ToDoList.Presentation
 @using ToDoList.Presentation.Components
+@using ToDoList.Presentation.Services
+@using ToDoList.Domain.Enums
+@using ToDoList.Domain
+@using ToDoList.Domain.Entities
+@using ToDoList.Domain.Forms
+@using ToDoList.Application
+@using ToDoList.Application.ToDoList
+
+@using Blazorise
+@using Blazorise.Components
+@using Blazorise.Snackbar

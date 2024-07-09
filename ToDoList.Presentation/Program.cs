@@ -1,10 +1,27 @@
 using ToDoList.Presentation;
+using ToDoList.Infrastructure;
+using ToDoList.Application.ToDoList;
+using ToDoList.Presentation.Services;
+using Blazorise;
+using Blazorise.Tailwind;
+using Blazorise.Icons.FontAwesome;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddInfrastructure();
+
+builder.Services.AddScoped<IToDoList, ToDoListService>();
+
+builder.Services.AddScoped<DialogService>();
+
+builder.Services
+    .AddBlazorise()
+    .AddTailwindProviders()
+    .AddFontAwesomeIcons();
 
 var app = builder.Build();
 

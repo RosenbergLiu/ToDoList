@@ -1,19 +1,29 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
-
+<html lang="en" class="h-full bg-gray-100 dark:bg-gray-900">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <base href="/" />
     <link href="app.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="ToDoList.Presentation.styles.css" />
+
+    <script src="_content/Blazorise.Tailwind/blazorise.tailwind.config.js?v=1.5.3.0"></script>
+
+    <link href="_content/Blazorise/blazorise.css" rel="stylesheet" />
+    <link href="_content/Blazorise.Tailwind/blazorise.tailwind.css" rel="stylesheet" />
+
+    <!--Blazorise Notification Style-->
+    <link href="_content/Blazorise.Snackbar/blazorise.snackbar.css" rel="stylesheet" />
+
     <HeadOutlet />
 </head>
 
-<body>
+<body class="h-full">
     <Routes />
     <script src="_framework/blazor.web.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.js"></script>
+    <script src="https://unpkg.com/flowbite@1.5.4/dist/flowbite.js"></script>
+    <script src="js/dialog.js"></script>
 </body>
 
 </html>
