@@ -13,7 +13,7 @@ namespace ToDoList.Domain.Forms
         public string Title { get; set; } = string.Empty;
 
         [Required]
-        public string DueDateStr { get; set; } = string.Empty;
+        public DateTime? DueDate { get; set; }
 
         [Required]
         public string Description { get; set; } = string.Empty;

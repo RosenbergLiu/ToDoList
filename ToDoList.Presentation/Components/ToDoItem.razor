@@ -155,14 +155,7 @@
 
     public async Task OnRecordDetailChanged()
     {
-        if (DateTime.TryParseExact(FormModel.DueDateStr, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime newDueDate))
-        {
-            Record.DueDate = newDueDate;
-        }
-        else
-        {
-            // Notify failed to change date
-        }
+        Record.DueDate = FormModel.DueDate!.Value;
 
         await OnUpdate.InvokeAsync(Record);
     }
@@ -179,7 +172,7 @@
             {
                 Title = Record.Title,
                 Description = Record.Description,
-                DueDateStr = Record.DueDate.ToString("dd-MM-yyyy")
+                DueDate = Record.DueDate
             };
         ModalRef.Show();
     }

@@ -18,42 +18,53 @@
                         <SelectItem Value="@ToDoType.Completed">Completed</SelectItem>
                     </Select>
                 </div>
+                <div>
+                    @if (FilterStartDate != null || FilterEndDate != null)
+                    {
+                        <Button Clicked="ClearFilterDate" class="block rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500">Clear</Button>
+                    }
+                </div>
 
                 <span class="inline-block text-gray-500 dark:text-gray-400"> from </span>
 
-                <div>
+                <div class="w-48">
                     <div class="relative max-w-sm">
                         <div class="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3">
                             <svg class="h-4 w-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
                             </svg>
                         </div>
-                        <DatePicker @ref="FilterStartDatePicker" TValue="DateTime?" DateChanged="OnStartDateChanged" Max="FilterStartDateMax" InputMode="DateInputMode.Date" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 ps-10 text-sm text-gray-900 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Select date" />
+                        <button @onclick="@(()=>FilterStartDatePicker.ToggleAsync())" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 ps-8 text-sm text-gray-900 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                            @FilterStartDateStr
+                        </button>
+                        <DatePicker @ref="FilterStartDatePicker" TValue="DateTime?" DateChanged="OnStartDateChanged" Max="FilterStartDateMax" InputMode="DateInputMode.Date" class="hidden" />
                     </div>
                 </div>
 
                 <span class="inline-block text-gray-500 dark:text-gray-400"> to </span>
-
-                <div>
+                
+                <div class="w-48">
                     <div class="relative max-w-sm">
                         <div class="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3">
                             <svg class="h-4 w-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
                             </svg>
                         </div>
-                        <DatePicker @ref="FilterEndDatePicker" TValue="DateTime?" Min="FilterEndDateMin" DateChanged="OnEndDateChanged" InputMode="DateInputMode.Date" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 ps-10 text-sm text-gray-900 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Select date" />
+                        <button @onclick="@(()=>FilterEndDatePicker.ToggleAsync())" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 ps-8 text-sm text-gray-900 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                            @FilterEndDateStr
+                        </button>
+                        <DatePicker @ref="FilterEndDatePicker" TValue="DateTime?" Min="FilterEndDateMin" DateChanged="OnEndDateChanged" InputMode="DateInputMode.Date" class="hidden"/>
                     </div>
                 </div>
             </div>
         </div>
 
-        <button type="button" class="shadow-purple-500/50 me-2 mt-6 w-full rounded-lg bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 px-5 py-2.5 text-center text-sm font-medium text-white shadow-lg hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:shadow-lg dark:shadow-purple-800/80 dark:focus:ring-purple-800">Add New To-do</button>
+        <button @onclick="OnAddNewClicked" type="button" class="shadow-purple-500/50 me-2 mt-6 w-full rounded-lg bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 px-5 py-2.5 text-center text-sm font-medium text-white shadow-lg hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:shadow-lg dark:shadow-purple-800/80 dark:focus:ring-purple-800">Add New To-do</button>
 
         @if (isBusy)
         {
             <h2 class="text-l mt-6 font-semibold text-gray-900 dark:text-white sm:text-xl">Loading</h2>
         }
-        
 
         <div class="mt-6 flow-root sm:mt-8">
             <div class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -66,18 +77,20 @@
     </div>
 </div>
 
+<ToDoModal @ref="AddNewToDoModal" Record="@(null)" OnUpdate="UpdateRecord" OnDelete="DeleteRecord" OnCreate="CreateRecord"></ToDoModal>
+
 @code{
     DatePicker<DateTime?> FilterStartDatePicker;
+    string FilterStartDateStr = "Select date";
+    DateTime? FilterStartDate;
+    DateTime? FilterStartDateMax;
 
     DatePicker<DateTime?> FilterEndDatePicker;
-
-    DateTime? FilterStartDate { get; set; }
-
-    DateTime? FilterStartDateMax { get; set; }
-
+    string FilterEndDateStr = "Select date";
     DateTime? FilterEndDate { get; set; }
-
     DateTime? FilterEndDateMin { get; set; }
+
+    ToDoModal AddNewToDoModal;
 
     public ToDoType SelectedToDoType { get; set; }
 
@@ -141,11 +154,40 @@
     {
         FilterStartDate = startDate;
         FilterEndDateMin = startDate;
+        FilterStartDateStr = startDate!.Value.ToString("dd-MM-yyyy");
     }
 
     private void OnEndDateChanged(DateTime? endDate)
     {
         FilterEndDate = endDate;
         FilterStartDateMax = endDate;
+        FilterEndDateStr = endDate!.Value.ToString("dd-MM-yyyy");
+    }
+
+    private void ClearFilterDate()
+    {
+        FilterStartDate = FilterEndDate = null;
+        FilterStartDateStr = FilterEndDateStr = "Select date";
+        FilterStartDateMax = FilterEndDateMin = null;
+    }
+
+    private async void CreateRecord(ToDoDetailsFormModel model)
+    {
+        var record = new ToDoRecord
+            {
+                DueDate = model.DueDate!.Value,
+                CreatedOn = DateTime.Now,
+                Description = model.Description,
+                Title = model.Title,
+                State = ToDoState.Created
+            };
+
+
+    }
+
+    private void OnAddNewClicked()
+    {
+
+        AddNewToDoModal.Show();
     }
 }
