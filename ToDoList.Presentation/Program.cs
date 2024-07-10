@@ -1,7 +1,6 @@
 using ToDoList.Presentation;
 using ToDoList.Infrastructure;
 using ToDoList.Application.ToDoList;
-using ToDoList.Presentation.Services;
 using Blazorise;
 using Blazorise.Tailwind;
 using Blazorise.Icons.FontAwesome;
@@ -15,8 +14,6 @@ builder.Services.AddRazorComponents()
 builder.Services.AddInfrastructure();
 
 builder.Services.AddScoped<IToDoList, ToDoListService>();
-
-builder.Services.AddScoped<DialogService>();
 
 builder.Services
     .AddBlazorise()
