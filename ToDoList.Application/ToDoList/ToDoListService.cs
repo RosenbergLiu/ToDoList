@@ -22,14 +22,11 @@ namespace ToDoList.Application.ToDoList
             try
             {
                 var records = await _context.ToDoRecords
-                .Where(record => !record.IsDeleted)
-                .OrderBy(record => record.DueDate)
-                .ToListAsync();
-
-                if (records == null)
-                {
-                    return new GetRecordsResult("Failed to get data");
-                }
+                    .Where(record => !record.IsDeleted)
+                    .OrderBy(record => record.FinishedAt != null ? 1 : 0)
+                    .ThenBy(record => record.DueDate == null ? 1 : 0)
+                    .ThenBy(record => record.DueDate)
+                    .ToListAsync();
 
                 return new GetRecordsResult(records);
             }
@@ -65,7 +62,12 @@ namespace ToDoList.Application.ToDoList
                     query = query.Where(t => t.CreatedOn <= endDate.Value);
                 }
 
-                var records = await query.OrderBy(record => record.DueDate).ToListAsync();
+                var records = await query
+                    .Where(record => !record.IsDeleted)
+                    .OrderBy(record => record.FinishedAt != null ? 1 : 0)
+                    .ThenBy(record => record.DueDate == null ? 1 : 0)
+                    .ThenBy(record => record.DueDate)
+                    .ToListAsync();
 
                 return new GetRecordsResult(records);
             }
