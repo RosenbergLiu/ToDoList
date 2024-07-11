@@ -1,6 +1,7 @@
 ﻿@page "/"
 @rendermode InteractiveServer
 @inject IToDoList ToDoListService
+@inject IJSRuntime JSRuntime
 
 <PageTitle>Todo</PageTitle>
 
@@ -98,9 +99,9 @@
     ToDoModal AddNewToDoModal;
 
     // List of records
-    public List<ToDoRecord> ToDoRecords { get; set; } = new List<ToDoRecord>();
+    List<ToDoRecord> ToDoRecords { get; set; }
 
-    private bool isBusy { get; set; } = false;
+    bool isBusy { get; set; };
 
     protected override async Task OnInitializedAsync()
     {
@@ -124,7 +125,7 @@
 
         if (!result.IsSuccess)
         {
-            // display error message
+            await JSRuntime.InvokeVoidAsync("alert", result.Message);
             return;
         }
 
@@ -139,7 +140,7 @@
 
         if (!result.IsSuccess)
         {
-            // display error message
+            await JSRuntime.InvokeVoidAsync("alert", result.Message);
             return;
         }
 
@@ -155,7 +156,7 @@
         var result = await ToDoListService.DeleteRecord(recordId);
         if (!result.IsSuccess)
         {
-            // display error message
+            await JSRuntime.InvokeVoidAsync("alert", result.Message);
             return;
         }
 
@@ -171,7 +172,7 @@
         var result = await ToDoListService.CreateRecordAsync(model);
         if (!result.IsSuccess)
         {
-            // display error message
+            await JSRuntime.InvokeVoidAsync("alert", result.Message);
             return;
         }
 
