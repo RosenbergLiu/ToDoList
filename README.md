@@ -6,5 +6,6 @@ Open terminal in the ```ToDoList.Presentation``` folder
 <br /><br />
 Run following command to start (.NET 8.0 sdk is required)
 ```csharp
-dotnet run
+dotnet run -c Release --launch-profile https
 ```
+The default port is ```7055``` or ```5141```. If occupied, change it in ```ToDoList.Presentation/Properties/launchSettings.json```
